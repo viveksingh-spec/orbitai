@@ -1,0 +1,95 @@
+enum CompanyType {
+  STARTUP
+  ENTERPRISE
+  RESEARCH_LAB
+  NONPROFIT
+}
+
+enum CompanyStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model Company {
+  id          Int           @id @default(autoincrement())
+  slug        String        @unique
+  name        String        @unique
+  description String
+  logoUrl     String?
+  websiteUrl  String
+  industry    String
+  location    String?
+  foundedYear Int?
+  type        CompanyType
+  status      CompanyStatus @default(PUBLISHED)
+  isFeatured  Boolean       @default(false)
+  viewCount   Int           @default(0)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @default(now())
+
+  categories  CompanyCategory[]
+  tools       CompanyTool[]
+  models      CompanyModel[]
+
+  @@index([status, isFeatured])
+  @@index([industry])
+  @@index([type])
+  @@index([foundedYear])
+}
+
+model Category {
+  id          Int               @id @default(autoincrement())
+  slug        String            @unique
+  name        String            @unique
+  description String?
+  companies   CompanyCategory[]
+}
+
+model CompanyCategory {
+  companyId  Int
+  categoryId Int
+  company    Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([companyId, categoryId])
+  @@index([categoryId])
+}
+
+model Tool {
+  id          Int           @id @default(autoincrement())
+  slug        String        @unique
+  name        String
+  description String
+  websiteUrl  String
+  companies   CompanyTool[]
+}
+
+model CompanyTool {
+  companyId Int
+  toolId    Int
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  tool      Tool    @relation(fields: [toolId], references: [id], onDelete: Cascade)
+
+  @@id([companyId, toolId])
+  @@index([toolId])
+}
+
+model AiModel {
+  id          Int           @id @default(autoincrement())
+  slug        String        @unique
+  name        String
+  description String
+  companies   CompanyModel[]
+}
+
+model CompanyModel {
+  companyId Int
+  modelId   Int
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  model     AiModel @relation(fields: [modelId], references: [id], onDelete: Cascade)
+
+  @@id([companyId, modelId])
+  @@index([modelId])
+}
+
