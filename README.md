@@ -22,7 +22,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000/companies](http://localhost:3000/companies).
+Open [https://orbitai-ivory.vercel.app/companies]
 
 ## Environment
 
